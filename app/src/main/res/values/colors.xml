@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Brand Colors -->
+    <color name="brand_primary">#83cd6a</color>
+    <color name="brand_secondary">#419c41</color>
+    <color name="brand_tertiary">#e04f41</color>
+    
+    <!-- Legacy names for compatibility -->
+    <color name="colorPrimary">#83cd6a</color>
+    <color name="colorPrimaryDark">#419c41</color>
+    <color name="colorAccent">#e04f41</color>
+    <color name="colorSecondary">#419c41</color>
+    <color name="colorTertiary">#e04f41</color>
+    
+    <!-- Theme specific -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="grey_light">#F5F5F5</color>
+    <color name="grey_dark">#212121</color>
+
+    <!-- Dark Mode Palette -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_surface_variant">#2C2C2C</color>
+    <color name="dark_on_surface">#E1E1E1</color>
+    <color name="dark_on_surface_variant">#B0B0B0</color>
+
+    <!-- Search Bar Theme Colors -->
+    <color name="search_bar_bg">#F5F5F5</color>
+</resources>

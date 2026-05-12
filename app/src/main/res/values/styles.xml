@@ -1,0 +1,106 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Palette Colors -->
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorPrimaryDark">@color/brand_secondary</item>
+        <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="colorAccent">@color/brand_tertiary</item>
+        <item name="colorError">@color/brand_tertiary</item>
+
+        <!-- UI Components Styles -->
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="floatingActionButtonStyle">@style/Widget.App.FAB</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNav</item>
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+        
+        <!-- System bars tinting -->
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <!-- Dialog Styles -->
+        <item name="materialAlertDialogTheme">@style/Widget.App.MaterialAlertDialog</item>
+    </style>
+
+    <!-- Custom Dialog Style -->
+    <style name="Widget.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.Dialog</item>
+    </style>
+
+    <style name="ShapeAppearance.App.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <!-- Base styles for inheritance -->
+    <style name="Widget.App" parent="" />
+
+    <!-- Custom Button Style -->
+    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <!-- Custom FAB Style -->
+    <style name="Widget.App.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">?attr/colorAccent</item>
+        <item name="tint">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.FAB</item>
+    </style>
+
+    <style name="ShapeAppearance.App" parent="" />
+
+    <style name="ShapeAppearance.App.FAB" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Custom Bottom Navigation -->
+    <style name="Widget.App.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="backgroundTint">@color/white</item>
+        <item name="itemIconTint">@color/brand_secondary</item>
+        <item name="itemTextColor">@color/brand_secondary</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <!-- TextInputLayout Style -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/brand_primary</item>
+        <item name="hintTextColor">@color/brand_primary</item>
+    </style>
+
+    <!-- Outlined Button Style -->
+    <style name="Widget.App.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">28dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <!-- Search Input Style -->
+    <style name="Widget.App.SearchInput" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusTopStart">28dp</item>
+        <item name="boxCornerRadiusTopEnd">28dp</item>
+        <item name="boxCornerRadiusBottomStart">28dp</item>
+        <item name="boxCornerRadiusBottomEnd">28dp</item>
+        <item name="startIconTint">?attr/colorPrimary</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxBackgroundColor">@color/search_bar_bg</item>
+        <item name="hintEnabled">false</item>
+        <item name="android:textColorHint">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="Widget.App.Divider">
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+</resources>

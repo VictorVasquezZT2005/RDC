@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home_app_logo"
+        android:title="Inicio" />
+    <item
+        android:id="@+id/nav_users"
+        android:icon="@drawable/contacts_product"
+        android:title="Usuarios" />
+    <item
+        android:id="@+id/nav_schools"
+        android:icon="@drawable/school"
+        android:title="Escuelas" />
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/settings"
+        android:title="Ajustes" />
+</menu>

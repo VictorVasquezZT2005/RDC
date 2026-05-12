@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82327975341",
+    "project_id": "registro-de-cumplimiento",
+    "storage_bucket": "registro-de-cumplimiento.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82327975341:android:2b4c705b42de2c9b53dd24",
+        "android_client_info": {
+          "package_name": "xyz.zt.rdc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5wQ5lhp0wkF__7I2xL47ghHk8iRukMek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
