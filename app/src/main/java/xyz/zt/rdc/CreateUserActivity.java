@@ -26,14 +26,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.view.WindowManager;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 public class CreateUserActivity extends AppCompatActivity {
 
-    private AutoCompleteTextView spinnerUserRole, spinnerSchool, spinnerUserGrade, spinnerUserSection, spinnerUserGender;
+    private AutoCompleteTextView spinnerUserRole, spinnerSchool, spinnerUserGrade, spinnerUserSection, spinnerUserGender, spinnerUserTurn;
     private TextInputEditText etUserName, etUserEmail, etUserPassword, etStudentNIE;
     private TextInputLayout tilPassword, tilNIE;
-    private LinearLayout layoutGradeSectionFields, layoutSchoolSelection, layoutAdminPasswordControl, layoutTeacherAssignments;
+    private LinearLayout layoutGradeSectionFields, layoutSchoolSelection, layoutAdminPasswordControl, layoutTeacherAssignments, layoutSelectedAssignmentsContainer;
     private Button btnSaveUser, btnSendResetEmail, btnSelectAssignments;
-    private TextView tvTitle, tvSelectedAssignments;
+    private TextView tvTitle, tvNoAssignments;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private boolean isCurrentEditorAdmin = false;
@@ -45,6 +51,7 @@ public class CreateUserActivity extends AppCompatActivity {
     private String pendingGrade = null;
     private String pendingSection = null;
     private String pendingGender = null;
+    private String pendingTurn = null;
 
     private static final String ROLE_TEACHER = "teacher";
     private static final String ROLE_ADMIN = "admin";
@@ -56,6 +63,7 @@ public class CreateUserActivity extends AppCompatActivity {
     private String[] roleLabels = {"Maestro", "Administrador (Dev)", "Director", "Sub-Director", "Asistente Administrativo", "Alumno"};
     private String[] roleKeys = {ROLE_TEACHER, ROLE_ADMIN, ROLE_DIRECTOR, ROLE_SUB_DIRECTOR, ROLE_ADMIN_ASSISTANT, ROLE_STUDENT};
     private String[] genderLabels = {"Masculino", "Femenino"};
+    private String[] turnLabels = {"Matutino", "Vespertino", "Nocturno"};
 
     private Map<String, List<String>> schoolConfig = new HashMap<>();
     private List<String> currentGrades = new ArrayList<>();
@@ -63,8 +71,22 @@ public class CreateUserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Soporte para Notch y Edge-to-Edge
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = 
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_user);
+
+        // Aplicar insets al layout raíz para evitar superposición con notch y barras de sistema
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            return windowInsets;
+        });
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -80,6 +102,7 @@ public class CreateUserActivity extends AppCompatActivity {
         spinnerUserGrade = findViewById(R.id.spinnerUserGrade);
         spinnerUserSection = findViewById(R.id.spinnerUserSection);
         spinnerUserGender = findViewById(R.id.spinnerUserGender);
+        spinnerUserTurn = findViewById(R.id.spinnerUserTurn);
         etStudentNIE = findViewById(R.id.etStudentNIE);
         layoutGradeSectionFields = findViewById(R.id.layoutGradeSectionFields);
         layoutTeacherAssignments = findViewById(R.id.layoutTeacherAssignments);
@@ -88,11 +111,13 @@ public class CreateUserActivity extends AppCompatActivity {
         btnSaveUser = findViewById(R.id.btnSaveUser);
         btnSendResetEmail = findViewById(R.id.btnSendResetEmail);
         btnSelectAssignments = findViewById(R.id.btnSelectAssignments);
-        tvSelectedAssignments = findViewById(R.id.tvSelectedAssignments);
+        layoutSelectedAssignmentsContainer = findViewById(R.id.layoutSelectedAssignmentsContainer);
+        tvNoAssignments = findViewById(R.id.tvNoAssignments);
 
         checkCurrentEditorRole();
         setupRolesSpinner();
         setupGenderSpinner();
+        setupTurnsSpinner();
         loadSchools();
 
         spinnerUserRole.setOnItemClickListener((parent, view, position, id) -> {
@@ -117,6 +142,10 @@ public class CreateUserActivity extends AppCompatActivity {
 
         spinnerUserGrade.setOnItemClickListener((parent, view, position, id) -> {
             updateSectionsSpinner();
+        });
+
+        spinnerUserSection.setOnItemClickListener((parent, view, position, id) -> {
+            updateTurnsSpinnerForSection();
         });
 
         editingDocId = getIntent().getStringExtra("docId");
@@ -144,38 +173,60 @@ public class CreateUserActivity extends AppCompatActivity {
             return;
         }
 
-        List<String> allOptions = new ArrayList<>();
-        // Using currentGrades to maintain order
-        for (String grade : currentGrades) {
-            List<String> sections = schoolConfig.get(grade);
-            if (sections != null) {
-                for (String section : sections) {
-                    allOptions.add(grade + " - " + section);
-                }
-            }
-        }
+        // Create a custom layout for the dialog
+        android.widget.ScrollView scrollView = new android.widget.ScrollView(this);
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        int padding = (int) (16 * getResources().getDisplayMetrics().density);
+        container.setPadding(padding, padding, padding, padding);
+        scrollView.addView(container);
 
-        String[] optionsArray = allOptions.toArray(new String[0]);
-        boolean[] checkedItems = new boolean[optionsArray.length];
-        
-        for (int i = 0; i < optionsArray.length; i++) {
-            if (teacherSelectedAssignments.contains(optionsArray[i])) {
-                checkedItems[i] = true;
+        List<String> tempSelected = new ArrayList<>(teacherSelectedAssignments);
+
+        // Group by Grade
+        for (String grade : currentGrades) {
+            List<String> configs = schoolConfig.get(grade);
+            if (configs == null || configs.isEmpty()) continue;
+
+            // Add Grade Header
+            TextView tvHeader = new TextView(this);
+            tvHeader.setText(grade);
+            tvHeader.setTextSize(16);
+            tvHeader.setTypeface(null, android.graphics.Typeface.BOLD);
+            tvHeader.setPadding(0, (int) (16 * getResources().getDisplayMetrics().density), 0, (int) (8 * getResources().getDisplayMetrics().density));
+            tvHeader.setTextColor(getResources().getColor(R.color.brand_primary));
+            container.addView(tvHeader);
+
+            // Add Sections/Turns as Toggles
+            for (String config : configs) {
+                String sectionTurnLabel = config.replace("|", " ");
+                String fullLabel = grade + " - " + sectionTurnLabel;
+                
+                View rowView = getLayoutInflater().inflate(R.layout.item_assignment_row, container, false);
+                com.google.android.material.checkbox.MaterialCheckBox cb = rowView.findViewById(R.id.cbAssignment);
+                cb.setText(sectionTurnLabel);
+                
+                // Initialize state without triggering listener
+                cb.setChecked(tempSelected.contains(fullLabel));
+
+                cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        if (!tempSelected.contains(fullLabel)) tempSelected.add(fullLabel);
+                    } else {
+                        tempSelected.remove(fullLabel);
+                    }
+                });
+
+                container.addView(rowView);
             }
         }
 
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Seleccionar Asignaciones")
-                .setMultiChoiceItems(optionsArray, checkedItems, (dialog, which, isChecked) -> {
-                    if (isChecked) {
-                        if (!teacherSelectedAssignments.contains(optionsArray[which])) {
-                            teacherSelectedAssignments.add(optionsArray[which]);
-                        }
-                    } else {
-                        teacherSelectedAssignments.remove(optionsArray[which]);
-                    }
-                })
+                .setView(scrollView)
                 .setPositiveButton("Aceptar", (dialog, which) -> {
+                    teacherSelectedAssignments.clear();
+                    teacherSelectedAssignments.addAll(tempSelected);
                     updateSelectedAssignmentsText();
                 })
                 .setNegativeButton("Cancelar", null)
@@ -183,15 +234,24 @@ public class CreateUserActivity extends AppCompatActivity {
     }
 
     private void updateSelectedAssignmentsText() {
+        layoutSelectedAssignmentsContainer.removeAllViews();
         if (teacherSelectedAssignments.isEmpty()) {
-            tvSelectedAssignments.setText("Ninguna seleccionada");
+            tvNoAssignments.setVisibility(View.VISIBLE);
         } else {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < teacherSelectedAssignments.size(); i++) {
-                sb.append(teacherSelectedAssignments.get(i));
-                if (i < teacherSelectedAssignments.size() - 1) sb.append("\n");
+            tvNoAssignments.setVisibility(View.GONE);
+            for (String assignment : teacherSelectedAssignments) {
+                View rowView = getLayoutInflater().inflate(R.layout.item_selected_assignment, layoutSelectedAssignmentsContainer, false);
+                TextView tvName = rowView.findViewById(R.id.tvAssignmentName);
+                View btnRemove = rowView.findViewById(R.id.btnRemoveAssignment);
+
+                tvName.setText(assignment);
+                btnRemove.setOnClickListener(v -> {
+                    teacherSelectedAssignments.remove(assignment);
+                    updateSelectedAssignmentsText();
+                });
+
+                layoutSelectedAssignmentsContainer.addView(rowView);
             }
-            tvSelectedAssignments.setText(sb.toString());
         }
     }
 
@@ -250,8 +310,7 @@ public class CreateUserActivity extends AppCompatActivity {
             }
         });
         
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, currentGrades);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, currentGrades);
         spinnerUserGrade.setAdapter(adapter);
 
         if (pendingGrade != null) {
@@ -265,19 +324,60 @@ public class CreateUserActivity extends AppCompatActivity {
         currentSections.clear();
         String selectedGrade = spinnerUserGrade.getText().toString();
         if (!selectedGrade.isEmpty()) {
-            List<String> sections = schoolConfig.get(selectedGrade);
-            if (sections != null) {
-                currentSections.addAll(sections);
+            List<String> configs = schoolConfig.get(selectedGrade);
+            if (configs != null) {
+                java.util.Set<String> uniqueSections = new java.util.HashSet<>();
+                for (String config : configs) {
+                    if (config.contains("|")) {
+                        uniqueSections.add(config.split("\\|")[0]);
+                    } else {
+                        uniqueSections.add(config);
+                    }
+                }
+                currentSections.addAll(uniqueSections);
+                java.util.Collections.sort(currentSections);
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, currentSections);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, currentSections);
         spinnerUserSection.setAdapter(adapter);
 
         if (pendingSection != null) {
             spinnerUserSection.setText(pendingSection, false);
             pendingSection = null;
+        }
+        updateTurnsSpinnerForSection();
+    }
+
+    private void updateTurnsSpinnerForSection() {
+        List<String> availableTurns = new ArrayList<>();
+        String selectedGrade = spinnerUserGrade.getText().toString();
+        String selectedSection = spinnerUserSection.getText().toString();
+
+        if (!selectedGrade.isEmpty() && !selectedSection.isEmpty()) {
+            List<String> configs = schoolConfig.get(selectedGrade);
+            if (configs != null) {
+                for (String config : configs) {
+                    if (config.startsWith(selectedSection + "|")) {
+                        String[] parts = config.split("\\|");
+                        if (parts.length > 1) {
+                            availableTurns.add(parts[1]);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (availableTurns.isEmpty()) {
+            availableTurns.addAll(java.util.Arrays.asList(turnLabels));
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, availableTurns);
+        spinnerUserTurn.setAdapter(adapter);
+
+        if (pendingTurn != null) {
+            spinnerUserTurn.setText(pendingTurn, false);
+            pendingTurn = null;
         }
     }
 
@@ -301,15 +401,18 @@ public class CreateUserActivity extends AppCompatActivity {
     }
 
     private void setupRolesSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roleLabels);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, roleLabels);
         spinnerUserRole.setAdapter(adapter);
     }
 
     private void setupGenderSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genderLabels);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, genderLabels);
         spinnerUserGender.setAdapter(adapter);
+    }
+
+    private void setupTurnsSpinner() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, turnLabels);
+        spinnerUserTurn.setAdapter(adapter);
     }
 
     private void loadSchools() {
@@ -321,8 +424,7 @@ public class CreateUserActivity extends AppCompatActivity {
                     schoolNames.add(document.getString("name"));
                     schoolCodes.add(document.getId());
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, schoolNames);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, schoolNames);
                 spinnerSchool.setAdapter(adapter);
 
                 if (pendingSchoolCode != null) {
@@ -383,6 +485,7 @@ public class CreateUserActivity extends AppCompatActivity {
                         for (int i = 0; i < schoolCodes.size(); i++) {
                             if (schoolCodes.get(i).equals(pendingSchoolCode)) {
                                 spinnerSchool.setText(schoolNames.get(i), false);
+                                refreshSchoolConfig();
                                 break;
                             }
                         }
@@ -402,6 +505,7 @@ public class CreateUserActivity extends AppCompatActivity {
                     pendingGrade = doc.getString("grade");
                     pendingSection = doc.getString("section");
                     pendingGender = doc.getString("gender");
+                    pendingTurn = doc.getString("turn");
 
                     if (pendingGrade != null) {
                         spinnerUserGrade.setText(pendingGrade, false);
@@ -416,6 +520,11 @@ public class CreateUserActivity extends AppCompatActivity {
                     if (pendingGender != null) {
                         spinnerUserGender.setText(pendingGender, false);
                         pendingGender = null;
+                    }
+                    
+                    if (pendingTurn != null) {
+                        spinnerUserTurn.setText(pendingTurn, false);
+                        pendingTurn = null;
                     }
 
                     etStudentNIE.setText(doc.getString("nie"));
@@ -506,6 +615,7 @@ public class CreateUserActivity extends AppCompatActivity {
             }
             
             user.put("gender", spinnerUserGender.getText().toString());
+            user.put("turn", spinnerUserTurn.getText().toString());
             user.put("nie", etStudentNIE.getText().toString());
         }
 

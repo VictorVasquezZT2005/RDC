@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/listPreferredItemHeightSmall"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:gravity="center_vertical"
+    android:textAppearance="?attr/textAppearanceSubtitle1"
+    android:button="@null"
+    android:drawableEnd="@drawable/theme_toggle_selector"
+    android:drawableTint="@color/theme_toggle_tint"
+    android:ellipsize="marquee" />

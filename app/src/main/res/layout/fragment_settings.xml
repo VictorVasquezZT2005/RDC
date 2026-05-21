@@ -169,23 +169,68 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Seguir sistema (Automático)"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:button="@null"
+                android:drawableEnd="@drawable/theme_toggle_selector"
+                android:drawableTint="@color/theme_toggle_tint" />
 
             <RadioButton
                 android:id="@+id/radioLight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Modo Claro"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:button="@null"
+                android:drawableEnd="@drawable/theme_toggle_selector"
+                android:drawableTint="@color/theme_toggle_tint" />
 
             <RadioButton
                 android:id="@+id/radioDark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Modo Oscuro"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:button="@null"
+                android:drawableEnd="@drawable/theme_toggle_selector"
+                android:drawableTint="@color/theme_toggle_tint" />
 
         </RadioGroup>
+
+        <View
+            style="@style/Widget.App.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tamaño de Letra"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvFontSizeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal (100%)"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sliderFontSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.8"
+            android:valueTo="1.5"
+            android:stepSize="0.1"
+            android:value="1.0" />
 
         <View
             style="@style/Widget.App.Divider"

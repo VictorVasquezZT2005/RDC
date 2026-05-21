@@ -23,10 +23,16 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         void onDelete(DocumentSnapshot doc);
         default void onToggleStatus(DocumentSnapshot doc, boolean isDisabled) {}
         default void onItemClick(DocumentSnapshot doc) {}
+        default void onChangeRole(DocumentSnapshot doc) {}
+    }
+
+    public interface SubtitleMapper {
+        String map(DocumentSnapshot doc);
     }
 
     private List<DocumentSnapshot> list;
     private OnItemClickListener listener;
+    private SubtitleMapper subtitleMapper;
     private String titleField, subtitleField;
     private String restrictedEmail = null;
     private boolean showConfig = false;
@@ -51,6 +57,10 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         this.restrictedEmail = email;
     }
 
+    public void setSubtitleMapper(SubtitleMapper mapper) {
+        this.subtitleMapper = mapper;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,12 +72,18 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DocumentSnapshot doc = list.get(position);
         String title = doc.getString(titleField);
-        String subtitle = doc.getString(subtitleField);
+        String subtitle;
+        
+        if (subtitleMapper != null) {
+            subtitle = subtitleMapper.map(doc);
+        } else {
+            subtitle = doc.getString(subtitleField);
+        }
         
         // Set leading icon based on context
-        if (titleField.equals("name") && subtitleField.equals("code")) {
+        if (titleField.equals("name") && (subtitleField != null && subtitleField.equals("code") || subtitleMapper != null)) {
             holder.ivIcon.setImageResource(R.drawable.school);
-        } else if (titleField.equals("name") && subtitleField.equals("role")) {
+        } else if (titleField.equals("name") && subtitleField != null && subtitleField.equals("role")) {
             holder.ivIcon.setImageResource(R.drawable.account_circle);
         } else if (titleField.equals("studentName")) {
             holder.ivIcon.setImageResource(R.drawable.problem);
@@ -98,6 +114,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         holder.btnEdit.setText("");
         holder.btnDelete.setText("");
         holder.btnConfig.setText("");
+        holder.btnChangeRole.setText("");
 
         // Click listener for the entire item
         holder.itemView.setOnClickListener(v -> listener.onItemClick(doc));
@@ -123,6 +140,14 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
         String email = doc.getString("email");
         boolean isRestricted = restrictedEmail != null && restrictedEmail.equalsIgnoreCase(email);
+
+        // Role Change Button
+        if (!isReadOnly && titleField.equals("name") && subtitleField.equals("role") && !isRestricted) {
+            holder.btnChangeRole.setVisibility(View.VISIBLE);
+            holder.btnChangeRole.setOnClickListener(v -> listener.onChangeRole(doc));
+        } else {
+            holder.btnChangeRole.setVisibility(View.GONE);
+        }
 
         if (isRestricted || isReadOnly) {
             holder.btnEdit.setVisibility(View.GONE);
@@ -153,7 +178,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvSubtitle;
-        MaterialButton btnEdit, btnDelete, btnConfig;
+        MaterialButton btnEdit, btnDelete, btnConfig, btnChangeRole;
         ImageView ivIcon;
 
         public ViewHolder(@NonNull View itemView) {
@@ -163,6 +188,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
             btnConfig = itemView.findViewById(R.id.btnConfig);
+            btnChangeRole = itemView.findViewById(R.id.btnChangeRole);
             ivIcon = itemView.findViewById(R.id.ivItemIcon);
         }
     }

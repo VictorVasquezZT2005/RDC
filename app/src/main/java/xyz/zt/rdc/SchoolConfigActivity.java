@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -32,10 +33,8 @@ public class SchoolConfigActivity extends AppCompatActivity {
             "7mo Grado", "8vo Grado", "9no Grado"
     };
 
-    private String[] standardSections = {
-            "Sección A - Matutino", "Sección B - Matutino", "Sección C - Matutino",
-            "Sección A - Vespertino", "Sección B - Vespertino", "Sección C - Vespertino"
-    };
+    private String[] standardSections = {"Sección A", "Sección B", "Sección C", "Sección D", "Sección E"};
+    private String[] standardTurns = {"Matutino", "Vespertino", "Nocturno"};
 
     private Map<String, List<String>> currentConfig = new HashMap<>();
 
@@ -94,7 +93,7 @@ public class SchoolConfigActivity extends AppCompatActivity {
         gradeItem.setOrientation(LinearLayout.VERTICAL);
         gradeItem.setPadding(0, 8, 0, 16);
 
-        CheckBox cbGrade = new CheckBox(this);
+        MaterialCheckBox cbGrade = new MaterialCheckBox(this);
         cbGrade.setText(gradeName);
         cbGrade.setTextSize(18);
         cbGrade.setPadding(0, 16, 0, 16);
@@ -104,19 +103,51 @@ public class SchoolConfigActivity extends AppCompatActivity {
         sectionsContainer.setPadding(48, 0, 0, 0);
         sectionsContainer.setVisibility(View.GONE);
 
-        List<String> selectedSections = currentConfig.get(gradeName);
-        if (selectedSections != null) {
+        List<String> selectedConfigs = currentConfig.get(gradeName);
+        if (selectedConfigs != null) {
             cbGrade.setChecked(true);
             sectionsContainer.setVisibility(View.VISIBLE);
         }
 
         for (String section : standardSections) {
-            CheckBox cbSection = new CheckBox(this);
+            LinearLayout sectionRow = new LinearLayout(this);
+            sectionRow.setOrientation(LinearLayout.VERTICAL);
+            sectionRow.setPadding(0, 0, 0, 8);
+
+            MaterialCheckBox cbSection = new MaterialCheckBox(this);
             cbSection.setText(section);
-            if (selectedSections != null && selectedSections.contains(section)) {
-                cbSection.setChecked(true);
+            
+            LinearLayout turnsContainer = new LinearLayout(this);
+            turnsContainer.setOrientation(LinearLayout.HORIZONTAL);
+            turnsContainer.setPadding(48, 0, 0, 0);
+            turnsContainer.setVisibility(View.GONE);
+
+            boolean sectionHasTurnsSelected = false;
+            for (String turn : standardTurns) {
+                MaterialCheckBox cbTurn = new MaterialCheckBox(this);
+                cbTurn.setText(turn);
+                cbTurn.setTextSize(12);
+                
+                String fullKey = section + "|" + turn;
+                if (selectedConfigs != null && selectedConfigs.contains(fullKey)) {
+                    cbTurn.setChecked(true);
+                    sectionHasTurnsSelected = true;
+                }
+                turnsContainer.addView(cbTurn);
             }
-            sectionsContainer.addView(cbSection);
+
+            if (sectionHasTurnsSelected) {
+                cbSection.setChecked(true);
+                turnsContainer.setVisibility(View.VISIBLE);
+            }
+
+            cbSection.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                turnsContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            });
+
+            sectionRow.addView(cbSection);
+            sectionRow.addView(turnsContainer);
+            sectionsContainer.addView(sectionRow);
         }
 
         cbGrade.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -132,22 +163,36 @@ public class SchoolConfigActivity extends AppCompatActivity {
         Map<String, List<String>> newConfig = new HashMap<>();
 
         for (int i = 0; i < layoutGradesContainer.getChildCount(); i++) {
-            View view = layoutGradesContainer.getChildAt(i);
-            if (view instanceof LinearLayout) {
-                LinearLayout gradeItem = (LinearLayout) view;
-                CheckBox cbGrade = (CheckBox) gradeItem.getChildAt(0);
+            View gradeView = layoutGradesContainer.getChildAt(i);
+            if (gradeView instanceof LinearLayout) {
+                LinearLayout gradeItem = (LinearLayout) gradeView;
+                MaterialCheckBox cbGrade = (MaterialCheckBox) gradeItem.getChildAt(0);
                 LinearLayout sectionsContainer = (LinearLayout) gradeItem.getChildAt(1);
 
                 if (cbGrade.isChecked()) {
-                    List<String> sections = new ArrayList<>();
+                    List<String> gradeConfigs = new ArrayList<>();
                     for (int j = 0; j < sectionsContainer.getChildCount(); j++) {
-                        CheckBox cbSection = (CheckBox) sectionsContainer.getChildAt(j);
-                        if (cbSection.isChecked()) {
-                            sections.add(cbSection.getText().toString());
+                        View sectionView = sectionsContainer.getChildAt(j);
+                        if (sectionView instanceof LinearLayout) {
+                            LinearLayout sectionRow = (LinearLayout) sectionView;
+                            MaterialCheckBox cbSection = (MaterialCheckBox) sectionRow.getChildAt(0);
+                            LinearLayout turnsContainer = (LinearLayout) sectionRow.getChildAt(1);
+
+                            if (cbSection.isChecked()) {
+                                for (int k = 0; k < turnsContainer.getChildCount(); k++) {
+                                    View turnView = turnsContainer.getChildAt(k);
+                                    if (turnView instanceof MaterialCheckBox) {
+                                        MaterialCheckBox cbTurn = (MaterialCheckBox) turnView;
+                                        if (cbTurn.isChecked()) {
+                                            gradeConfigs.add(cbSection.getText().toString() + "|" + cbTurn.getText().toString());
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                    if (!sections.isEmpty()) {
-                        newConfig.put(cbGrade.getText().toString(), sections);
+                    if (!gradeConfigs.isEmpty()) {
+                        newConfig.put(cbGrade.getText().toString(), gradeConfigs);
                     }
                 }
             }

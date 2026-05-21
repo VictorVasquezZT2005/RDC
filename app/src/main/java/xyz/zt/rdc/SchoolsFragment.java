@@ -20,7 +20,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SchoolsFragment extends Fragment {
 
@@ -30,6 +32,7 @@ public class SchoolsFragment extends Fragment {
     private GenericAdapter adapter;
     private List<DocumentSnapshot> schoolList = new ArrayList<>();
     private List<DocumentSnapshot> filteredList = new ArrayList<>();
+    private Map<String, Integer> schoolTeacherCounts = new HashMap<>();
     private FirebaseFirestore db;
 
     @Nullable
@@ -92,9 +95,26 @@ public class SchoolsFragment extends Fragment {
             if (value != null) {
                 schoolList.clear();
                 schoolList.addAll(value.getDocuments());
-                applyFilter();
+                loadTeacherCounts();
             }
         });
+    }
+
+    private void loadTeacherCounts() {
+        db.collection("users")
+                .whereEqualTo("role", "teacher")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    schoolTeacherCounts.clear();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String schoolCode = doc.getString("schoolCode");
+                        if (schoolCode != null) {
+                            int currentCount = schoolTeacherCounts.getOrDefault(schoolCode, 0);
+                            schoolTeacherCounts.put(schoolCode, currentCount + 1);
+                        }
+                    }
+                    applyFilter();
+                });
     }
 
     private void applyFilter() {
@@ -105,6 +125,8 @@ public class SchoolsFragment extends Fragment {
             String name = doc.getString("name");
             String code = doc.getString("code");
 
+            if (code == null) code = doc.getId();
+
             boolean matchesSearch = searchText.isEmpty() ||
                     (name != null && name.toLowerCase().contains(searchText)) ||
                     (code != null && code.toLowerCase().contains(searchText));
@@ -113,6 +135,14 @@ public class SchoolsFragment extends Fragment {
                 filteredList.add(doc);
             }
         }
+
+        adapter.setSubtitleMapper(doc -> {
+            String code = doc.getString("code");
+            if (code == null) code = doc.getId();
+            int count = schoolTeacherCounts.getOrDefault(code, 0);
+            return "Código: " + code + " | Maestros: " + count;
+        });
+
         adapter.notifyDataSetChanged();
     }
 }

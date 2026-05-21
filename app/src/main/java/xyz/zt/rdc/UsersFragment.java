@@ -41,9 +41,13 @@ public class UsersFragment extends Fragment {
     private FirebaseAuth mAuth;
     private String mode = "all";
     private String userRole = "";
+    private String userSchoolCode = "";
 
     private String[] filterLabels = {"Todos", "Maestro", "Administrador", "Director", "Sub-Director", "Asistente Administrativo", "Alumno"};
     private String[] filterKeys = {"all", "teacher", "admin", "principal", "sub_principal", "administrative_assistant", "student"};
+
+    private String[] roleLabels = {"Maestro", "Administrador (Dev)", "Director", "Sub-Director", "Asistente Administrativo", "Alumno"};
+    private String[] roleKeys = {"teacher", "admin", "principal", "sub_principal", "administrative_assistant", "student"};
 
     public UsersFragment() {
         // Required empty public constructor
@@ -113,8 +117,7 @@ public class UsersFragment extends Fragment {
     }
 
     private void setupFilterSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, filterLabels);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, filterLabels);
         spinnerFilterRole.setAdapter(adapter);
 
         spinnerFilterRole.setOnItemClickListener((parent, view, position, id) -> {
@@ -164,6 +167,11 @@ public class UsersFragment extends Fragment {
                 intent.putExtra("docId", doc.getId());
                 startActivity(intent);
             }
+
+            @Override
+            public void onChangeRole(DocumentSnapshot doc) {
+                showChangeRoleDialog(doc);
+            }
         });
         if ("student_filter".equals(mode)) {
             adapter.setReadOnly(true);
@@ -194,6 +202,7 @@ public class UsersFragment extends Fragment {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                         userRole = doc.getString("role");
+                        userSchoolCode = doc.getString("schoolCode");
                         List<String> assignments = (List<String>) doc.get("assignments");
                         if (assignments != null) {
                             teacherAssignments.clear();
@@ -269,18 +278,9 @@ public class UsersFragment extends Fragment {
                 matchesRole = "student".equals(role);
                 
                 if ("teacher".equals(userRole) && matchesRole) {
-                    // Filter by teacher assignments AND demerits
-                    // A student matches if they have a demerit OR are in the teacher's assigned grade/section
-                    boolean hasDemerit = studentsWithDemerits.contains(email);
-                    boolean isAssigned = false;
-                    if (grade != null && section != null) {
-                        String assignment = grade + " - " + section;
-                        isAssigned = teacherAssignments.contains(assignment);
-                    }
-                    
-                    // Logic: If they have a demerit OR they are in my assigned class, show them.
-                    // This ensures students from the teacher's class always appear.
-                    if (!hasDemerit && !isAssigned) {
+                    // Strictly filter by teacher's schoolCode
+                    String studentSchoolCode = doc.getString("schoolCode");
+                    if (studentSchoolCode == null || !studentSchoolCode.equals(userSchoolCode)) {
                         matchesRole = false;
                     }
                 }
@@ -295,5 +295,38 @@ public class UsersFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    private void showChangeRoleDialog(DocumentSnapshot doc) {
+        String currentRole = doc.getString("role");
+        int currentSelection = -1;
+        for (int i = 0; i < roleKeys.length; i++) {
+            if (roleKeys[i].equals(currentRole)) {
+                currentSelection = i;
+                break;
+            }
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_dialog_toggle, roleLabels);
+
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(getContext())
+                .setTitle("Cambiar Rol de Usuario")
+                .setSingleChoiceItems(adapter, currentSelection, (dialog, which) -> {
+                    String newRole = roleKeys[which];
+                    if (!newRole.equals(currentRole)) {
+                        db.collection("users").document(doc.getId()).update("role", newRole)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(), "Rol actualizado correctamente", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 }

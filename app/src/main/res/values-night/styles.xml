@@ -9,6 +9,10 @@
         <item name="colorAccent">@color/brand_tertiary</item>
         <item name="colorError">@color/brand_tertiary</item>
 
+        <!-- Global Font Family -->
+        <item name="android:fontFamily">@font/caveat</item>
+        <item name="fontFamily">@font/caveat</item>
+
         <!-- Unified background for a seamless look -->
         <item name="android:windowBackground">@color/dark_background</item>
         <item name="colorSurface">@color/dark_background</item>
@@ -19,6 +23,7 @@
         <item name="floatingActionButtonStyle">@style/Widget.App.FAB</item>
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNav</item>
         <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+        <item name="checkboxStyle">@style/Widget.App.CheckBox</item>
         
         <!-- System bars tinting unified -->
         <item name="android:statusBarColor">@color/dark_background</item>
@@ -83,6 +88,12 @@
         <item name="hintTextColor">@color/brand_primary</item>
         <item name="android:textColorHint">@color/dark_on_surface_variant</item>
         <item name="boxBackgroundColor">@color/dark_surface_variant</item>
+    </style>
+
+    <!-- Custom CheckBox Style -->
+    <style name="Widget.App.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_selector</item>
+        <item name="android:buttonTint">@color/theme_toggle_tint</item>
     </style>
 
     <!-- Outlined Button Style (Dark) -->

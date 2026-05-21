@@ -1,13 +1,21 @@
 package xyz.zt.rdc;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
+import android.view.WindowManager;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -19,13 +27,37 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        SharedPreferences prefs = newBase.getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        float fontScale = prefs.getFloat("FontScale", 1.0f);
+        
+        Configuration configuration = newBase.getResources().getConfiguration();
+        configuration.fontScale = fontScale;
+        
+        // Use a simpler approach to apply font scale without creating a whole new context if possible
+        // or ensure the base context is used correctly
+        super.attachBaseContext(newBase);
+        
+        // Apply to the resources directly (compatible approach)
+        newBase.getResources().updateConfiguration(configuration, newBase.getResources().getDisplayMetrics());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Cargar preferencia de tema antes de crear la vista
+        super.onCreate(savedInstanceState);
+        
+        // Habilitar modo Edge-to-Edge para soporte de Notch
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = 
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+
+        // Cargar preferencia de tema
         SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         int themeMode = prefs.getInt("ThemeMode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         AppCompatDelegate.setDefaultNightMode(themeMode);
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -35,6 +67,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        
+        // Ajustar Insets para evitar que el contenido quede bajo el notch o barra de navegación
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, 0);
+            return windowInsets;
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, 0, 0, insets.bottom);
+            return windowInsets;
+        });
+
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         checkUserPermissions(bottomNav);
@@ -72,9 +118,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_schools:
                         selectedFragment = new SchoolsFragment();
-                        break;
-                    case R.id.nav_settings:
-                        selectedFragment = new SettingsFragment();
                         break;
                 }
 

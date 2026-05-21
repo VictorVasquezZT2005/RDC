@@ -28,8 +28,9 @@ public class SettingsFragment extends Fragment {
 
     private RadioGroup radioGroupTheme;
     private RadioButton radioSystem, radioLight, radioDark;
+    private com.google.android.material.slider.Slider sliderFontSize;
     private Button btnLogout, btnEditName, btnChangePassword;
-    private TextView tvUserEmail, tvUserName, tvUserRole, tvUserSchool, tvUserAssignments;
+    private TextView tvUserEmail, tvUserName, tvUserRole, tvUserSchool, tvUserAssignments, tvFontSizeLabel;
     private View layoutTeacherInfo;
     private SharedPreferences sharedPreferences;
     private FirebaseAuth mAuth;
@@ -55,6 +56,8 @@ public class SettingsFragment extends Fragment {
         tvUserRole = view.findViewById(R.id.tvUserRole);
         tvUserSchool = view.findViewById(R.id.tvUserSchool);
         tvUserAssignments = view.findViewById(R.id.tvUserAssignments);
+        tvFontSizeLabel = view.findViewById(R.id.tvFontSizeLabel);
+        sliderFontSize = view.findViewById(R.id.sliderFontSize);
         layoutTeacherInfo = view.findViewById(R.id.layoutTeacherInfo);
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -65,6 +68,20 @@ public class SettingsFragment extends Fragment {
 
         sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
         int savedTheme = sharedPreferences.getInt("ThemeMode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        float savedFontScale = sharedPreferences.getFloat("FontScale", 1.0f);
+
+        sliderFontSize.setValue(savedFontScale);
+        updateFontSizeLabel(savedFontScale);
+
+        sliderFontSize.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) {
+                updateFontSizeLabel(value);
+                sharedPreferences.edit().putFloat("FontScale", value).apply();
+                if (getActivity() != null) {
+                    getActivity().recreate();
+                }
+            }
+        });
 
         if (savedTheme == AppCompatDelegate.MODE_NIGHT_NO) {
             radioLight.setChecked(true);
@@ -99,7 +116,35 @@ public class SettingsFragment extends Fragment {
             getActivity().finish();
         });
 
+        // Ocultar BottomNav al entrar
+        toggleBottomNav(false);
+
         return view;
+    }
+
+    private void toggleBottomNav(boolean show) {
+        if (getActivity() != null) {
+            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
+            if (bottomNav != null) {
+                bottomNav.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Mostrar BottomNav al salir
+        toggleBottomNav(true);
+    }
+
+    private void updateFontSizeLabel(float scale) {
+        int percentage = Math.round(scale * 100);
+        String label = percentage + "%";
+        if (scale == 1.0f) label = "Normal (100%)";
+        else if (scale < 1.0f) label = "Pequeña (" + percentage + "%)";
+        else if (scale > 1.2f) label = "Grande (" + percentage + "%)";
+        tvFontSizeLabel.setText(label);
     }
 
     private void showEditNameDialog() {
