@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Toast;
 
 import android.view.WindowManager;
@@ -22,49 +23,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        SharedPreferences prefs = newBase.getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        float fontScale = prefs.getFloat("FontScale", 1.0f);
-        
-        Configuration configuration = newBase.getResources().getConfiguration();
-        configuration.fontScale = fontScale;
-        
-        // Use a simpler approach to apply font scale without creating a whole new context if possible
-        // or ensure the base context is used correctly
-        super.attachBaseContext(newBase);
-        
-        // Apply to the resources directly (compatible approach)
-        newBase.getResources().updateConfiguration(configuration, newBase.getResources().getDisplayMetrics());
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        String savedFont = prefs.getString("AppFont", "ubuntu");
-        if ("caveat".equals(savedFont)) {
-            setTheme(R.style.AppTheme_Caveat);
-        } else {
-            setTheme(R.style.AppTheme_Ubuntu);
-        }
-        
         super.onCreate(savedInstanceState);
         
-        // Habilitar modo Edge-to-Edge para soporte de Notch
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = 
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-
-        // Cargar preferencia de tema
-        int themeMode = prefs.getInt("ThemeMode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        AppCompatDelegate.setDefaultNightMode(themeMode);
-
         setContentView(R.layout.activity_main);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -132,6 +98,13 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             };
+
+    public void setBottomNavVisibility(boolean visible) {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
 
     @Override
     public void onBackPressed() {

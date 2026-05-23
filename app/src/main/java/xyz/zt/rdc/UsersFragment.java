@@ -94,11 +94,25 @@ public class UsersFragment extends Fragment {
         setupRecyclerView();
         loadCurrentUserAndUsers();
 
+        // Hide BottomNav if in Alumnos mode
+        if ("student_filter".equals(mode) && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavVisibility(false);
+        }
+
         btnAddUser.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), CreateUserActivity.class));
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Restore BottomNav if it was hidden
+        if ("student_filter".equals(mode) && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavVisibility(true);
+        }
     }
 
     private void setupSearchView() {
@@ -278,9 +292,29 @@ public class UsersFragment extends Fragment {
                 matchesRole = "student".equals(role);
                 
                 if ("teacher".equals(userRole) && matchesRole) {
-                    // Strictly filter by teacher's schoolCode
+                    // Strictly filter for teachers:
+                    // 1. Same school
                     String studentSchoolCode = doc.getString("schoolCode");
-                    if (studentSchoolCode == null || !studentSchoolCode.equals(userSchoolCode)) {
+                    if (studentSchoolCode != null && studentSchoolCode.equals(userSchoolCode)) {
+                        
+                        // 2. Either belongs to teacher's assignments OR has a conduct record
+                        boolean inAssignments = false;
+                        if (grade != null && section != null) {
+                            String assignmentKey = grade + " - " + section;
+                            for (String assignment : teacherAssignments) {
+                                if (assignment.contains(assignmentKey)) {
+                                    inAssignments = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        boolean hasDemerits = email != null && studentsWithDemerits.contains(email);
+                        
+                        if (!inAssignments && !hasDemerits) {
+                            matchesRole = false;
+                        }
+                    } else {
                         matchesRole = false;
                     }
                 }

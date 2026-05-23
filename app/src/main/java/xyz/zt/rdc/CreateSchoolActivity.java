@@ -21,7 +21,7 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CreateSchoolActivity extends AppCompatActivity {
+public class CreateSchoolActivity extends BaseActivity {
 
     private TextInputEditText etSchoolName, etSchoolCode, etDepartment, etMunicipality, etDistrict;
     private Button btnSaveSchool, btnConfigGrades;
@@ -31,13 +31,6 @@ public class CreateSchoolActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Soporte para Notch y Edge-to-Edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = 
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_school);
 

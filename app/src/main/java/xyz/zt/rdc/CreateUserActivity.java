@@ -32,7 +32,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class CreateUserActivity extends AppCompatActivity {
+public class CreateUserActivity extends BaseActivity {
 
     private AutoCompleteTextView spinnerUserRole, spinnerSchool, spinnerUserGrade, spinnerUserSection, spinnerUserGender, spinnerUserTurn;
     private TextInputEditText etUserName, etUserEmail, etUserPassword, etStudentNIE;
@@ -71,13 +71,6 @@ public class CreateUserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Soporte para Notch y Edge-to-Edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = 
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_user);
 

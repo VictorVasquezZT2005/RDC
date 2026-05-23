@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/normativa_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/windowBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reglamento de Cortesía"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <!-- Artículo 3 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Artículo 3. Asignación de deméritos"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Los deméritos se asignarán en los siguientes casos:\n\n    A) No saludar al entrar o al salir del aula.\n\n    B) Omitir &quot;Por favor&quot; al hacer una petición.\n\n    C) Omitir &quot;Gracias&quot; al recibir un favor, material o atención.\n\n    D) Usar un tono grosero o irrespetuoso hacia compañeros, docentes o personal."
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <View
+            style="@style/Widget.App.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Artículo 5 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Artículo 5. Escala de consecuencias"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="    - 3 deméritos: Advertencia verbal y reflexión escrita («La importancia de la cortesía»).\n\n    - 6 deméritos: comunicación a la familia y tarea correctiva (redactar un texto, elaborar un cartel o participar en una actividad sobre cortesía).\n\n    - 10 deméritos: suspensión de privilegios escolares (participación en juegos, actividades culturales o recreativas).\n\n    - Más de 10 deméritos: reunión con la dirección y la familia, acompañada de una última advertencia para el estudiante.\n\n    - 15 deméritos: el estudiante no podrá ser promovido de grado."
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <View
+            style="@style/Widget.App.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Artículo 6 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Artículo 6. Redención de deméritos"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Los estudiantes podrán eliminar deméritos acumulados de las siguientes maneras:\n\n    A) Cumplir una semana completa con saludos y expresiones de cortesía ejemplares.\n\n    B) Apoyar voluntariamente en actividades de orden y limpieza escolar.\n\n    C) Participar en campañas de valores organizadas por el centro educativo."
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <View
+            style="@style/Widget.App.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Artículo 7 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Artículo 7. Reconocimientos"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Al final de cada mes, los estudiantes o las secciones con cero deméritos recibirán una Mención Honorífica de Cortesía Escolar.\n\nSe podrán otorgar:\n\n    A) Diplomas\n\n    B) Menciones en Murales Escolares"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="32dp" />
+
+    </LinearLayout>
+</ScrollView>

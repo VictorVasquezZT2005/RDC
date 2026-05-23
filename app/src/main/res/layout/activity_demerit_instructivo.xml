@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/instructivo_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/windowBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Guía de Uso: Targeta de Deméritos Digital"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <!-- Datos del Centro y Estudiante -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Automatización de Datos"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="La aplicación completa automáticamente la mayoría de los campos para agilizar el proceso:\n\n• Selección de Alumno: Al escribir el nombre o NIE, la app rellena automáticamente el Grado, Sección, Turno y los datos completos del Centro Educativo (Código, Distrito, Municipio y Departamento).\n\n• Datos del Director: El nombre del Director(a) se carga automáticamente basándose en la escuela asignada al alumno seleccionado."
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <View
+            style="@style/Widget.App.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Registro Conductual -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cómo registrar incidencias"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="11. Fecha y Hora: Se captura automáticamente el momento exacto en que creas un nuevo bloque de registro.\n\nCategorías (D, R, RC): Utiliza los selectores desplegables para elegir la letra correspondiente según el tipo de registro. La aplicación solo permite una categoría por bloque:\n\n• D (Demérito): Selecciona la falta cometida (A, B, C o D).\n• R (Redención): Selecciona la acción correctiva realizada (A, B o C).\n• RC (Reconocimiento): Selecciona el mérito positivo (A o B).\n\nNota: Si seleccionas un Demérito o Redención, la sección de Reconocimiento se ocultará automáticamente para evitar errores, y viceversa."
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <View
+            style="@style/Widget.App.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Gestión de Tarjeta -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bitácora e Integridad"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Añadir Registros (+): Puedes agregar hasta un máximo de 15 registros por alumno durante el año escolar.\n\n• Bloqueo de Seguridad: Los registros que ya han sido guardados previamente aparecerán bloqueados. Esto garantiza que el historial conductual no sea alterado.\n\n• Firmas y Validación: Los campos de firma están reservados para validación posterior. El nombre de quien registra (Maestro) se rellena automáticamente con tus datos de inicio de sesión.\n\n• Totales: La aplicación suma automáticamente todas las incidencias registradas en la fila final de la tarjeta."
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="32dp" />
+
+    </LinearLayout>
+</ScrollView>

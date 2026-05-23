@@ -25,7 +25,11 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.slider.Slider;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class OnboardingActivity extends AppCompatActivity {
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class OnboardingActivity extends BaseActivity {
 
     private MaterialCheckBox cbTerms, cbNotifications;
     private MaterialButton btnNext;
@@ -45,16 +49,6 @@ public class OnboardingActivity extends AppCompatActivity {
             });
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        SharedPreferences prefs = newBase.getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        float fontScale = prefs.getFloat("FontScale", 1.0f);
-        Configuration configuration = newBase.getResources().getConfiguration();
-        configuration.fontScale = fontScale;
-        super.attachBaseContext(newBase);
-        newBase.getResources().updateConfiguration(configuration, newBase.getResources().getDisplayMetrics());
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
 
@@ -65,21 +59,19 @@ public class OnboardingActivity extends AppCompatActivity {
             return;
         }
 
-        // Aplicar fuente seleccionada
-        String savedFont = sharedPreferences.getString("AppFont", "ubuntu");
-        if ("caveat".equals(savedFont)) {
-            setTheme(R.style.AppTheme_Caveat);
-        } else {
-            setTheme(R.style.AppTheme_Ubuntu);
-        }
-
         super.onCreate(savedInstanceState);
 
-        // Cargar tema
+        String savedFont = sharedPreferences.getString("AppFont", "ubuntu");
         int themeMode = sharedPreferences.getInt("ThemeMode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        AppCompatDelegate.setDefaultNightMode(themeMode);
 
         setContentView(R.layout.activity_onboarding);
+
+        // Apply insets to avoid overlapping with status bar/notch
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            return windowInsets;
+        });
 
         // Views
         cbTerms = findViewById(R.id.cbTerms);

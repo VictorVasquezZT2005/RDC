@@ -32,8 +32,9 @@
         <activity android:name=".SchoolConfigActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".UserDetailActivity" />
-        <activity android:name=".CreateDemeritActivity"
-            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".DemeritNormativaActivity" />
+        <activity android:name=".DemeritInstructivoActivity" />
+        <activity android:name=".SchoolFormActivity" />
         
     </application>
 

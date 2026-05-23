@@ -13,18 +13,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SchoolConfigActivity extends AppCompatActivity {
+public class SchoolConfigActivity extends BaseActivity {
 
     private LinearLayout layoutGradesContainer;
-    private TextView tvSchoolNameHeader;
+    private TextView tvSchoolNameHeader, tvDirectorName;
     private Button btnSaveConfig;
     private FirebaseFirestore db;
     private String docId;
+    private String principalNameFound = null;
 
     private String[] standardGrades = {
             "Kinder 4", "Kinder 5", "Kinder 6",
@@ -43,12 +48,20 @@ public class SchoolConfigActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_school_config);
 
+        // Apply insets to avoid overlapping with status bar/notch
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            return windowInsets;
+        });
+
         db = FirebaseFirestore.getInstance();
         docId = getIntent().getStringExtra("docId");
         String schoolName = getIntent().getStringExtra("schoolName");
 
         layoutGradesContainer = findViewById(R.id.layoutGradesContainer);
         tvSchoolNameHeader = findViewById(R.id.tvSchoolNameHeader);
+        tvDirectorName = findViewById(R.id.tvDirectorName);
         btnSaveConfig = findViewById(R.id.btnSaveConfig);
 
         if (schoolName != null) {
@@ -62,8 +75,24 @@ public class SchoolConfigActivity extends AppCompatActivity {
         }
 
         loadConfig();
+        loadPrincipalInfo();
 
         btnSaveConfig.setOnClickListener(v -> saveConfig());
+    }
+
+    private void loadPrincipalInfo() {
+        db.collection("users")
+                .whereEqualTo("schoolCode", docId)
+                .whereEqualTo("role", "principal")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        principalNameFound = queryDocumentSnapshots.getDocuments().get(0).getString("name");
+                        tvDirectorName.setText(principalNameFound);
+                    } else {
+                        tvDirectorName.setText("No hay director asignado a esta escuela");
+                    }
+                });
     }
 
     private void loadConfig() {
@@ -203,7 +232,13 @@ public class SchoolConfigActivity extends AppCompatActivity {
             return;
         }
 
-        db.collection("schools").document(docId).update("config", newConfig)
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("config", newConfig);
+        if (principalNameFound != null) {
+            updates.put("principalName", principalNameFound);
+        }
+
+        db.collection("schools").document(docId).update(updates)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Configuración guardada", Toast.LENGTH_SHORT).show();
                     finish();

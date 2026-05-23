@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/windowBackground">
+
+    <!-- Toolbar Simulado -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Registro de Cumplimiento"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveForm"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            app:icon="@drawable/check_box" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TableLayout
+                    android:id="@+id/tableForm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#CCCCCC"
+                    android:padding="1dp">
+
+                    <!-- Cabecera Principal (Nivel 1) -->
+                    <TableRow android:background="@color/white">
+                        <TextView style="@style/HeaderCell" android:text="#" android:layout_span="1" />
+                        <TextView style="@style/HeaderCell" android:text="11. FECHA" android:layout_span="1" />
+                        <TextView style="@style/HeaderCell" android:text="12. D (Deméritos)" android:layout_span="4" />
+                        <TextView style="@style/HeaderCell" android:text="13. R (Redención)" android:layout_span="3" />
+                        <TextView style="@style/HeaderCell" android:text="14. RC (Reconoc.)" android:layout_span="2" />
+                        <TextView style="@style/HeaderCell" android:text="15. REGISTRA D/RC" android:layout_span="1" />
+                        <TextView style="@style/HeaderCell" android:text="16. RESP. REDENCIÓN" android:layout_span="1" />
+                        <TextView style="@style/HeaderCell" android:text="17. FIRMA ESTUDIANTE" android:layout_span="1" />
+                    </TableRow>
+
+                    <!-- Cabecera de Subcategorías (Nivel 2) -->
+                    <TableRow android:background="@color/white">
+                        <TextView style="@style/SubHeaderCell" android:text="" />
+                        <TextView style="@style/SubHeaderCell" android:text="" />
+                        <!-- Categoría D -->
+                        <TextView style="@style/SubHeaderCell" android:text="A" />
+                        <TextView style="@style/SubHeaderCell" android:text="B" />
+                        <TextView style="@style/SubHeaderCell" android:text="C" />
+                        <TextView style="@style/SubHeaderCell" android:text="D" />
+                        <!-- Categoría R -->
+                        <TextView style="@style/SubHeaderCell" android:text="A" />
+                        <TextView style="@style/SubHeaderCell" android:text="B" />
+                        <TextView style="@style/SubHeaderCell" android:text="C" />
+                        <!-- Categoría RC -->
+                        <TextView style="@style/SubHeaderCell" android:text="A" />
+                        <TextView style="@style/SubHeaderCell" android:text="B" />
+                        
+                        <TextView style="@style/SubHeaderCell" android:text="" />
+                        <TextView style="@style/SubHeaderCell" android:text="" />
+                        <TextView style="@style/SubHeaderCell" android:text="" />
+                    </TableRow>
+
+                    <!-- Filas Dinámicas (Se generarán 8 en Java o aquí por claridad) -->
+                    <!-- Aquí incluyo una de ejemplo, el resto se replicará -->
+                    <!-- ... REPETIR PARA 8 FILAS ... -->
+
+                    <!-- Fila de Total -->
+                    <TableRow android:id="@+id/rowTotal" android:background="#F0F0F0">
+                        <TextView style="@style/TotalCell" android:text="18. TOTAL" android:layout_span="2" />
+                        <TextView android:id="@+id/tvTotalDA" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalDB" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalDC" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalDD" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalRA" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalRB" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalRC" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalRCA" style="@style/TotalCell" android:text="0" />
+                        <TextView android:id="@+id/tvTotalRCB" style="@style/TotalCell" android:text="0" />
+                        <TextView style="@style/TotalCell" android:layout_span="3" />
+                    </TableRow>
+
+                </TableLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre, firma y sello del Director del C. E."
+                    android:textStyle="bold"
+                    android:layout_marginTop="24dp"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+                    
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDirectorInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minLines="3"
+                        android:gravity="top"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+</LinearLayout>

@@ -16,7 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class UserDetailActivity extends AppCompatActivity {
+public class UserDetailActivity extends BaseActivity {
 
     private TextView tvName, tvRole;
     private View rowEmail, rowSchool, rowGender, rowGrade, rowSection, rowNIE, rowAssignments;
@@ -25,13 +25,6 @@ public class UserDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Soporte para Notch y Edge-to-Edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = 
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_detail);
 
