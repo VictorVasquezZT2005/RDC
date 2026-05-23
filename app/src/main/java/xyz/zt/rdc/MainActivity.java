@@ -44,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String savedFont = prefs.getString("AppFont", "ubuntu");
+        if ("caveat".equals(savedFont)) {
+            setTheme(R.style.AppTheme_Caveat);
+        } else {
+            setTheme(R.style.AppTheme_Ubuntu);
+        }
+        
         super.onCreate(savedInstanceState);
         
         // Habilitar modo Edge-to-Edge para soporte de Notch
@@ -54,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Cargar preferencia de tema
-        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         int themeMode = prefs.getInt("ThemeMode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         AppCompatDelegate.setDefaultNightMode(themeMode);
 
@@ -109,16 +116,13 @@ public class MainActivity extends AppCompatActivity {
             item -> {
                 Fragment selectedFragment = null;
 
-                switch (item.getItemId()) {
-                    case R.id.nav_home:
-                        selectedFragment = new HomeFragment();
-                        break;
-                    case R.id.nav_users:
-                        selectedFragment = new UsersFragment();
-                        break;
-                    case R.id.nav_schools:
-                        selectedFragment = new SchoolsFragment();
-                        break;
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_home) {
+                    selectedFragment = new HomeFragment();
+                } else if (itemId == R.id.nav_users) {
+                    selectedFragment = new UsersFragment();
+                } else if (itemId == R.id.nav_schools) {
+                    selectedFragment = new SchoolsFragment();
                 }
 
                 if (selectedFragment != null) {

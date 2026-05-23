@@ -10,8 +10,8 @@
         <item name="colorError">@color/brand_tertiary</item>
 
         <!-- Global Font Family -->
-        <item name="android:fontFamily">@font/caveat</item>
-        <item name="fontFamily">@font/caveat</item>
+        <item name="android:fontFamily">@font/ubuntu_regular</item>
+        <item name="fontFamily">@font/ubuntu_regular</item>
 
         <!-- UI Components Styles -->
         <item name="materialButtonStyle">@style/Widget.App.Button</item>
@@ -108,6 +108,17 @@
     <style name="Widget.App.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:button">@drawable/checkbox_selector</item>
         <item name="android:buttonTint">@color/theme_toggle_tint</item>
+    </style>
+
+    <!-- Font Styles -->
+    <style name="AppTheme.Ubuntu" parent="AppTheme">
+        <item name="android:fontFamily">@font/ubuntu_regular</item>
+        <item name="fontFamily">@font/ubuntu_regular</item>
+    </style>
+
+    <style name="AppTheme.Caveat" parent="AppTheme">
+        <item name="android:fontFamily">@font/caveat</item>
+        <item name="fontFamily">@font/caveat</item>
     </style>
 
     <style name="Widget.App.Divider">

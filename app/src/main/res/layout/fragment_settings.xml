@@ -209,6 +209,52 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Fuente de la Aplicación"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupFont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioFontUbuntu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ubuntu (Predeterminada)"
+                android:fontFamily="@font/ubuntu_regular"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:button="@null"
+                android:drawableEnd="@drawable/theme_toggle_selector"
+                android:drawableTint="@color/theme_toggle_tint" />
+
+            <RadioButton
+                android:id="@+id/radioFontCaveat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Caveat (Elegante)"
+                android:fontFamily="@font/caveat"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:button="@null"
+                android:drawableEnd="@drawable/theme_toggle_selector"
+                android:drawableTint="@color/theme_toggle_tint" />
+
+        </RadioGroup>
+
+        <View
+            style="@style/Widget.App.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Tamaño de Letra"
             android:textSize="18sp"
             android:textStyle="bold"

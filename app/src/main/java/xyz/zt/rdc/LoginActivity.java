@@ -46,6 +46,14 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String savedFont = prefs.getString("AppFont", "ubuntu");
+        if ("caveat".equals(savedFont)) {
+            setTheme(R.style.AppTheme_Caveat);
+        } else {
+            setTheme(R.style.AppTheme_Ubuntu);
+        }
+        
         super.onCreate(savedInstanceState);
         
         // Soporte para Notch y Edge-to-Edge

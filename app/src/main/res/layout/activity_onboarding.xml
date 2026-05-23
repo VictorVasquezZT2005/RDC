@@ -1,115 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
-    android:padding="24dp">
+    android:fillViewport="true"
+    android:background="?attr/colorSurface">
 
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="64dp"
-        android:src="@drawable/diversity_2"
-        app:tint="?attr/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Bienvenido a RDC"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivLogo" />
-
-    <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="El Registro de Cumplimiento te permite gestionar deméritos y el seguimiento de alumnos de forma eficiente y segura dentro de tu centro educativo."
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:textColor="?android:attr/textColorSecondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvWelcome" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardPermissions"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="?attr/colorSurface"
-        app:layout_constraintTop_toBottomOf="@id/tvDescription">
+        android:padding="24dp">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/diversity_2"
+            app:tint="?attr/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Bienvenido a RDC"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/caveat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivLogo" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:layout_constraintTop_toBottomOf="@id/tvWelcome">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Permisos Necesarios"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
-
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/cbPermissionInternet"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Acceso a Internet (Base de datos)"
-                android:checked="true"
-                android:enabled="false" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/cbTerms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Acepto los términos de uso y privacidad" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Configuración Inicial"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
 
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                <!-- Font Selection -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estilo de Fuente"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnOnboardingNext"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginBottom="48dp"
-        android:enabled="false"
-        android:padding="0dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        app:icon="@drawable/arrow_circle_right"
-        app:iconPadding="0dp"
-        app:iconSize="56dp"
-        app:iconTint="@color/onboarding_next_tint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+                <RadioGroup
+                    android:id="@+id/radioGroupFontOnboarding"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
 
-    <TextView
-        android:id="@+id/tvInstruction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Acepta los términos para continuar"
-        android:textSize="12sp"
-        android:textColor="?attr/colorError"
-        app:layout_constraintBottom_toBottomOf="@id/btnOnboardingNext"
-        app:layout_constraintEnd_toStartOf="@id/btnOnboardingNext"
-        app:layout_constraintTop_toTopOf="@id/btnOnboardingNext" />
+                    <RadioButton
+                        android:id="@+id/radioFontUbuntuOnboarding"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Ubuntu"
+                        android:fontFamily="@font/ubuntu_regular" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <RadioButton
+                        android:id="@+id/radioFontCaveatOnboarding"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Caveat"
+                        android:fontFamily="@font/caveat" />
+                </RadioGroup>
+
+                <!-- Theme Selection -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tema Visual"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroupThemeOnboarding"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <RadioButton
+                        android:id="@+id/radioSystemOnboarding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sistema (Automático)" />
+
+                    <RadioButton
+                        android:id="@+id/radioLightOnboarding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Claro" />
+
+                    <RadioButton
+                        android:id="@+id/radioDarkOnboarding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Oscuro" />
+                </RadioGroup>
+
+                <!-- Font Size -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tamaño de Texto"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvFontSizeLabelOnboarding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Normal (100%)"
+                    android:textSize="12sp"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderFontSizeOnboarding"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="0.8"
+                    android:valueTo="1.5"
+                    android:stepSize="0.1"
+                    android:value="1.0"
+                    android:layout_marginBottom="16dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Permisos y Privacidad"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/cbNotifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recibir notificaciones de la aplicación"
+                    android:checked="true" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/cbTerms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Acepto los términos de uso y privacidad" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOnboardingNext"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp"
+            android:enabled="false"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:icon="@drawable/arrow_circle_right"
+            app:iconPadding="0dp"
+            app:iconSize="56dp"
+            app:iconTint="@color/onboarding_next_tint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardSettings" />
+
+        <TextView
+            android:id="@+id/tvInstruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Acepta los términos para continuar"
+            android:textSize="12sp"
+            android:textColor="?attr/colorError"
+            app:layout_constraintBottom_toBottomOf="@id/btnOnboardingNext"
+            app:layout_constraintEnd_toStartOf="@id/btnOnboardingNext"
+            app:layout_constraintTop_toTopOf="@id/btnOnboardingNext" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

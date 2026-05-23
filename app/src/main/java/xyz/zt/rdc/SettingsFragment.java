@@ -26,8 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SettingsFragment extends Fragment {
 
-    private RadioGroup radioGroupTheme;
-    private RadioButton radioSystem, radioLight, radioDark;
+    private RadioGroup radioGroupTheme, radioGroupFont;
+    private RadioButton radioSystem, radioLight, radioDark, radioFontUbuntu, radioFontCaveat;
     private com.google.android.material.slider.Slider sliderFontSize;
     private Button btnLogout, btnEditName, btnChangePassword;
     private TextView tvUserEmail, tvUserName, tvUserRole, tvUserSchool, tvUserAssignments, tvFontSizeLabel;
@@ -48,6 +48,11 @@ public class SettingsFragment extends Fragment {
         radioSystem = view.findViewById(R.id.radioSystem);
         radioLight = view.findViewById(R.id.radioLight);
         radioDark = view.findViewById(R.id.radioDark);
+        
+        radioGroupFont = view.findViewById(R.id.radioGroupFont);
+        radioFontUbuntu = view.findViewById(R.id.radioFontUbuntu);
+        radioFontCaveat = view.findViewById(R.id.radioFontCaveat);
+
         btnLogout = view.findViewById(R.id.btnLogout);
         btnEditName = view.findViewById(R.id.btnEditName);
         btnChangePassword = view.findViewById(R.id.btnChangePassword);
@@ -69,6 +74,7 @@ public class SettingsFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
         int savedTheme = sharedPreferences.getInt("ThemeMode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         float savedFontScale = sharedPreferences.getFloat("FontScale", 1.0f);
+        String savedFont = sharedPreferences.getString("AppFont", "ubuntu");
 
         sliderFontSize.setValue(savedFontScale);
         updateFontSizeLabel(savedFontScale);
@@ -103,6 +109,26 @@ public class SettingsFragment extends Fragment {
             
             AppCompatDelegate.setDefaultNightMode(mode);
             sharedPreferences.edit().putInt("ThemeMode", mode).apply();
+        });
+
+        if ("caveat".equals(savedFont)) {
+            radioFontCaveat.setChecked(true);
+        } else {
+            radioFontUbuntu.setChecked(true);
+        }
+
+        radioGroupFont.setOnCheckedChangeListener((group, checkedId) -> {
+            String font;
+            if (checkedId == R.id.radioFontCaveat) {
+                font = "caveat";
+            } else {
+                font = "ubuntu";
+            }
+            
+            sharedPreferences.edit().putString("AppFont", font).apply();
+            if (getActivity() != null) {
+                getActivity().recreate();
+            }
         });
 
         btnEditName.setOnClickListener(v -> showEditNameDialog());
